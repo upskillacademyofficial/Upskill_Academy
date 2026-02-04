@@ -1,0 +1,22 @@
+DataFrame Read Modes
+
+# Step 1- Define schema by using inferschema
+
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+schema = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("name", StringType(), True),
+    StructField("age", IntegerType(), True),
+    StructField("salary", IntegerType(), True)
+])
+
+df_permissive = (
+    spark.read
+        .option("header", "true")
+        .option("mode", "PERMISSIVE")
+        .schema(schema)
+        .csv("/Volumes/workspace/default/db_volume/new_dir/demo_bad_data.csv")
+)
+
+display(df_permissive)
+df_permissive.printSchema()
