@@ -1,0 +1,38 @@
+Question- Workflow in databricks 
+# Notebook 1: ingest_data
+
+# Use a default path to read the uploaded file
+csv_path = "/Volumes/workspace/default/upskill_volume/EmpPune.csv"
+
+# Read the CSV file into a DataFrame
+df = spark.read.option("header", True).csv(csv_path)
+
+# Show a sample of the data
+df.show()
+
+# Save as a table for downstream use
+df.write.mode("overwrite").saveAsTable("raw_data")
+
+print("Data ingested and saved as 'raw_data'")
+
+
+# Notebook 2: transform_data
+df = spark.table("raw_data")
+
+# Filtering records where Salary > 80000
+filtered_df = df[df['Salary'] > 80000]
+
+filtered_df.write.mode("overwrite").saveAsTable("cleaned_data")
+
+print("Data transformed successfully.")
+
+
+# Notebook 3: report_data
+
+df = spark.table("cleaned_data")
+summary = df.groupBy("Salary").count()
+
+summary.show()
+summary.write.mode("overwrite").saveAsTable("summary_report")
+
+print("Summary generated successfully.")
