@@ -96,3 +96,44 @@ print("Learning Azure Data Engineering")
 print("New lines are added")
 print("will check if how code gets merge from main branch to sub-branch")
 print("Git integration with Azure Databricks")
+
+=====================================================================
+21.5- Integration of databricks with Power BI
+
+CREATE TABLE sales_data (
+    order_id INT,
+    order_date DATE,
+    region STRING,
+    product STRING,
+    category STRING,
+    sales_amount DOUBLE,
+    quantity INT
+);
+INSERT INTO sales_data VALUES
+(1,'2025-01-05','West','Laptop','Electronics',1200,2),
+(2,'2025-01-07','North','Phone','Electronics',800,3),
+(3,'2025-01-10','South','Desk','Furniture',300,1),
+(4,'2025-01-12','West','Chair','Furniture',150,4),
+(5,'2025-01-15','East','Laptop','Electronics',1200,1),
+(6,'2025-01-18','North','Tablet','Electronics',500,2),
+(7,'2025-01-20','South','Desk','Furniture',300,3),
+(8,'2025-01-22','East','Chair','Furniture',150,5),
+(9,'2025-01-25','West','Phone','Electronics',800,2),
+(10,'2025-01-28','North','Laptop','Electronics',1200,1);
+
+select * from sales_data;
+-------------------------------------------------
+    Total Sales
+SELECT SUM(sales_amount) AS total_sales
+FROM sales_data;
+----------------------------------------------
+    Sales by Region
+SELECT region, SUM(sales_amount) AS total_sales
+FROM sales_data
+GROUP BY region;
+-------------------------------------------
+    Sales by Category
+SELECT category, SUM(sales_amount) AS total_sales
+FROM sales_data
+GROUP BY category;
+---------------------------------------------
