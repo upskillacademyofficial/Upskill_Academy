@@ -16,7 +16,7 @@ FROM OPENROWSET(
     HEADER_ROW = TRUE
 ) AS sales_data;
 -------------------------------------
-Step 4- Create schema
+--Step 4- Create schema
 CREATE SCHEMA dim;
 CREATE SCHEMA fact;
 -------------------------------------
@@ -120,7 +120,7 @@ FROM fact.sales f
 JOIN dim.store s ON f.StoreID = s.StoreID
 GROUP BY s.StoreLocation;
 
-3. 👤 Top Customers by Spend
+--3. 👤 Top Customers by Spend
 SELECT 
     c.CustomerName,
     SUM(f.Quantity * f.UnitPrice) AS TotalSpend
@@ -129,7 +129,7 @@ JOIN dim.customer c ON f.CustomerID = c.CustomerID
 GROUP BY c.CustomerName
 ORDER BY TotalSpend DESC
 
-4. 🛒 Sales Type Distribution
+--4. 🛒 Sales Type Distribution
 SELECT 
     st.SalesType,
     COUNT(*) AS TransactionCount
@@ -138,7 +138,7 @@ JOIN dim.sales_type st ON f.SalesType = st.SalesType
 GROUP BY st.SalesType;
 
 -------------------------------------
-Step 8- To store query results into your ADLS container (gold-container in adlspracticestorage), you have a few options depending on your setup. Let’s walk through the easiest and most practical method using CREATE EXTERNAL TABLE AS SELECT (CTAS).
+--Step 8- To store query results into your ADLS container (gold-container in adlspracticestorage), you have a few options depending on your setup. Let’s walk through the easiest and most practical method using CREATE EXTERNAL TABLE AS SELECT (CTAS).
 --1. 🔐 Create a Master Key (if not already done)
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Admin@123';
 
