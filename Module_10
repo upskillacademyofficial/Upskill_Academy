@@ -1,0 +1,22 @@
+10.4.3-Union and Union All
+
+columns = ["id", "name", "salary"]
+
+data1 = [
+    (1, "Alice", 70000),
+    (2, "Bob", 80000),
+    (3, "Charlie", 75000)
+]
+
+df1 = spark.createDataFrame(data1, columns)
+df1.show()
+
+data2 = [
+    (3, "Charlie", 75000),
+    (4, "David", 72000),
+    (4, "David", 72000),
+    (5, "Eva", 68000)
+]
+
+df2 = spark.createDataFrame(data2, columns)
+df2.show()
