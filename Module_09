@@ -12,10 +12,10 @@ schema = StructType([
 
 df_permissive = (
     spark.read
-        .option("header", "true")
-        .option("mode", "PERMISSIVE")
-        .schema(schema)
-        .csv("/Volumes/workspace/default/db_volume/new_dir/demo_bad_data.csv")
+        .option("header", "true") \
+        .option("mode", "PERMISSIVE") \
+        .schema(schema) \
+        .csv("/Volumes/workspace/default/upskill_volume/demo_bad_data.csv")
 )
 
 display(df_permissive)
