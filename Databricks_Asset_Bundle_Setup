@@ -1,0 +1,56 @@
+Step 7- Now create a notebook
+File: src/demo_notebook.py 
+# Databricks notebook source
+
+df = spark.range(10)
+
+display(df)
+---------------------------------------------------
+Step 8- Configure job YAML
+File: resources/dabdemo.job.yml
+  
+resources:
+  jobs:
+    demo_job:
+      name: demo_job
+
+      tasks:
+        - task_key: notebook_task
+
+          notebook_task:
+            notebook_path: ../src/demo_notebook.py
+
+          existing_cluster_id: ${var.cluster_id}
+---------------------------------------------------------
+Step 10 – Configure databricks.yml
+
+bundle:
+  name: dabdemo
+
+include:
+  - resources/*.yml
+
+variables:
+  cluster_id:
+    description: Cluster ID for deployment
+
+targets:
+  dev:
+    mode: development
+    default: true
+
+    variables:
+      cluster_id: 0510-044613-v0gt0pvl
+
+    workspace:
+      host: https://adb-7405613758791348.8.azuredatabricks.net
+
+  prod:
+    mode: production
+
+    variables:
+      cluster_id: 0510-044633-wf4ied4w
+
+    workspace:
+      host: https://adb-7405610110616205.5.azuredatabricks.net
+      root_path: /Workspace/Users/upskillacademytraining@gmail.com/.bundle/${bundle.name}/${bundle.target}
