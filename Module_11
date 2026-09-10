@@ -1,0 +1,58 @@
+ # Method 1- by using dataframe
+data = [
+    (1, "John", "Doe", "Engineering", 70000),
+    (2, "Jane", "Smith", "HR", 50000),
+    (3, "Mike", "Johnson", "Finance", 60000),
+    (4, "Emily", "Davis", "Engineering", 75000),
+    (5, "Robert", "Brown", "Marketing", 55000),
+    (6, "Linda", "Wilson", "HR", 52000)
+]
+
+# Column names
+columns = ["ID", "FIRST_NAME", "LAST_NAME", "DEPARTMENT", "SALARY"]
+
+# Create DataFrame
+df_dept = spark.createDataFrame(data, columns)
+
+# Show the DataFrame
+display(df_dept)
+
+------------------------------------------
+%sql
+--Method 2- by using sql query
+CREATE TABLE sample_table (
+    ID INT,
+    NAME STRING,
+    SALARY INT
+);
+
+INSERT INTO sample_table VALUES 
+    (1, 'Alice', 60000),
+    (2, 'Bob', 65000),
+    (3, 'Charlie', 70000),
+    (4, 'Diana', 75000);
+--------------------------------------------
+# By using Spark.sql
+# Create employee table using spark.sql
+
+spark.sql("""
+CREATE OR REPLACE TABLE employee (
+    emp_id INT,
+    emp_name STRING,
+    department STRING,
+    salary DOUBLE,
+    city STRING
+)
+""")
+
+# Insert records into employee table
+
+spark.sql("""
+INSERT INTO employee VALUES
+(101, 'Rahul', 'IT', 55000, 'Pune'),
+(102, 'Sneha', 'HR', 45000, 'Mumbai'),
+(103, 'Amit', 'Finance', 60000, 'Delhi'),
+(104, 'Priya', 'IT', 70000, 'Bangalore'),
+(105, 'Karan', 'Sales', 50000, 'Hyderabad')
+""")
+-------------------------------------------------
