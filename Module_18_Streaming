@@ -1,0 +1,103 @@
+1.	Practical demo of auto loader
+
+1. autoloader with rescue
+# Data Reading
+df = spark.readStream.format("cloudFiles")\
+          .option("cloudFiles.format","csv")\
+          .option("cloudFiles.schemaLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+          .option("cloudFiles.schemaEvolutionMode","rescue")\
+          .load("/Volumes/workspace/data_engineering/autovol/raw/")
+
+# Data writting
+df.writeStream.format("delta")\
+        .outputMode("append")\
+        .option("checkpointLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+        .trigger(once=True)\
+        .start("/Volumes/workspace/data_engineering/autovol/destination/data/")
+
+# Once =True means trigger start processing data and it stop processing once job gets done.  we can also mention time like 5-10 sec
+
+------------------------------------------------------------------------------
+2. Idempotency with Autoloader
+# Write data
+df.writeStream.format("delta")\
+        .outputMode("append")\
+        .option("checkpointLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+        .trigger(once=True)\
+        .start("/Volumes/workspace/data_engineering/autovol/destination/data/")
+
+# Display data
+df_stream = spark.read.format("delta")\
+            .load("/Volumes/workspace/data_engineering/autovol/destination/data/")
+display(df_stream)
+
+# Extra column called _rescued_data gets created because we want to store unwanted columns,
+# by default value is null, because we do not have any new column inserted
+----------------------------------------------------------------------------------
+3. Schema Evolution with Autoloader - AddNewColumns
+# Step 1
+df = spark.readStream.format("cloudFiles")\
+          .option("cloudFiles.format","csv")\
+          .option("cloudFiles.schemaLocation","/Volumes/workspace/data_engineering/autovol/destination2/checkpoint/")\
+          .option("cloudFiles.schemaEvolutionMode","addNewColumns")\
+          .load("/Volumes/workspace/data_engineering/autovol/raw/")
+
+# Step 2
+df.writeStream.format("delta")\
+        .outputMode("append")\
+        .option("checkpointLocation","/Volumes/workspace/data_engineering/autovol/destination2/checkpoint/")\
+        .trigger(once=True)\
+        .option("mergeSchema", True)\
+        .start("/Volumes/workspace/data_engineering/autovol/destination2/data/")
+
+# Step 3- see the results
+df_stream = spark.read.format("delta")\
+            .load("/Volumes/workspace/data_engineering/autovol/destination2/data/")
+display(df_stream)
+----------------------------------------------------------------------------------
+4. Schema Evolution with Autoloader - Rescued Data
+
+# Step 1
+df.writeStream.format("delta")\
+        .outputMode("append")\
+        .option("checkpointLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+        .trigger(once=True)\
+        .start("/Volumes/workspace/data_engineering/autovol/destination/data/")
+
+# it should break the code, it should through an error
+
+# Step 2- 
+df = spark.readStream.format("cloudFiles")\
+          .option("cloudFiles.format","csv")\
+          .option("cloudFiles.schemaLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+          .option("cloudFiles.schemaEvolutionMode","rescue")\
+          .load("/Volumes/workspace/data_engineering/autovol/raw/")
+
+# Step 3- 
+df.writeStream.format("delta")\
+        .outputMode("append")\
+        .option("checkpointLocation","/Volumes/workspace/data_engineering/autovol/destination/checkpoint/")\
+        .trigger(once=True)\
+        .start("/Volumes/workspace/data_engineering/autovol/destination/data/")
+
+# Step 4- see the results
+df_stream = spark.read.format("delta")\
+            .load("/Volumes/workspace/data_engineering/autovol/destination/data/")
+display(df_stream)
+
+# Read the rescued_data which is of json using below query
+from pyspark.sql.functions import * 
+from pyspark.sql.types import *
+
+rescued_schema = StructType() \
+    .add("discount", StringType()) \
+    .add("payment_method", StringType())
+
+# Parse the stringified JSON column
+df_stream = df_stream.withColumn("rescued_struct", from_json(col("_rescued_data"), rescued_schema))
+
+# Extract individual fields
+df_stream = df_stream.withColumn("rescued_discount", col("rescued_struct.discount")) \
+       .withColumn("rescued_payment_method", col("rescued_struct.payment_method"))
+
+display(df_stream)
