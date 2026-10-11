@@ -67,23 +67,27 @@ display(join_table)
 
 =================================================================
 21.3- SQL Warehouse in Databricks
-create database new_test_db;
-use new_test_db;
-
-CREATE TABLE IF NOT EXISTS employee (
+-- Step 1: Create the employee table
+CREATE TABLE employee (
     emp_id INT,
-    emp_name STRING,
-    department STRING,
-    salary DOUBLE,
+    emp_name VARCHAR(40),
+    department VARCHAR(50),
+    salary DECIMAL(10, 2),
     join_date DATE
 );
-INSERT INTO employee VALUES
+
+-- Step 2: Insert records
+INSERT INTO employee (emp_id, emp_name, department, salary, join_date)
+VALUES
 (101, 'Amit Sharma', 'Data Engineering', 85000, '2022-01-10'),
 (102, 'Neha Verma', 'Analytics', 78000, '2021-11-05'),
 (103, 'Rahul Mehta', 'Data Engineering', 92000, '2023-03-18'),
 (104, 'Priya Singh', 'BI', 70000, '2020-07-25'),
 (105, 'Suresh Kumar', 'Platform', 88000, '2022-09-12');
-select * from employee;
+
+-- Step 3: Display all records
+SELECT *
+FROM employee;
 
 ==============================================================
 21.4 Devops for databricks
